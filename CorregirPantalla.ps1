@@ -1,4 +1,4 @@
-$VMName = "ServerWindows19"
+$VMName = "Windows Server 19"
 $VBoxPath = "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"
 & $VBoxPath controlvm $VMName poweroff soft 2>$null
 Start-Sleep -Seconds 3
