@@ -1,15 +1,26 @@
-ï»¿Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-git config --global --add safe.directory C:/Users/nitot/MiProyecto
-Set-Location -Path "C:\Users\nitot\MiProyecto"
+# ==========================================
+# SCRIPT AUTOMÁTICO DE GIT Y VIRTUALBOX
+# ==========================================
 
-# 1. Subir cambios a GitHub
+Write-Host "1. Guardando y subiendo cambios a GitHub..." -ForegroundColor Cyan
 git add .
-git commit -m "Actualizacion automatica $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
-git push origin main
+git commit -m "Actualizacion automatica del servidor" 2>$null
+git push
 
-Write-Host "`nSubido a GitHub. Aplicando cambios en la Maquina Virtual..." -ForegroundColor Yellow
+Write-Host "2. Aplicando configuración en la Máquina Virtual..." -ForegroundColor Cyan
+$VMName = "Windows Server 19"
+$VBoxPath = "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"
 
-# 2. Ejecutar automaticamente en la VM
-& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol "Windows Server 19" run --username "Administrador" --password "123.abc!" --exe "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -- powershell.exe -ExecutionPolicy Bypass -Command "Invoke-RestMethod https://raw.githubusercontent.com/nitotorrezramirez-cpu/MiProyecto/main/ConfigurarServidor.ps1 | Invoke-Expression"
+# Apagar la VM de forma segura por si estuviera colgada
+& $VBoxPath controlvm $VMName poweroff soft 2>$null
+Start-Sleep -Seconds 3
 
-Write-Host "`nÂ¡Todo se guardo, subio y ejecuto en el servidor con exito!" -ForegroundColor Green
+# Aplicar configuración gráfica definitiva (VBoxSVGA + Aceleración 3D + 128MB VRAM)
+& $VBoxPath modifyvm $VMName --graphicscontroller vboxsvga
+& $VBoxPath modifyvm $VMName --vram 128
+& $VBoxPath modifyvm $VMName --accelerate3d on
+
+# Asegurar que el lector de DVD esté vacío
+& $VBoxPath storageattach $VMName --storagectl "SATA" --port 1 --device 0 --medium emptydrive 2>$null
+
+Write-Host "¡Todo se guardó, subió y aplicó en el servidor con éxito!" -ForegroundColor Green
