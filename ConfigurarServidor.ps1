@@ -4,16 +4,12 @@ Write-Host "Iniciando configuracion del servidor..." -ForegroundColor Green
 Rename-Computer -NewName "ServerWindows19" -Force -ErrorAction SilentlyContinue
 Add-Computer -WorkGroupName "SO2" -ErrorAction SilentlyContinue
 
-# 2. Licencia
-slmgr /rearm
+# 2. Licencia (Silenciada para evitar ventanas emergentes)
+cscript //B C:\Windows\System32\slmgr.vbs /rearm 2>$null
 
 # 3. IP Estatica y DNS
 $Interfaz = (Get-NetAdapter | Where-Object Status -eq "Up")[0]
 New-NetIPAddress -InterfaceIndex $Interfaz.ifIndex -IPAddress "192.168.1.10" -PrefixLength 24 -DefaultGateway "192.168.1.1" -ErrorAction SilentlyContinue
-Set-DnsClientServerAddress -InterfaceIndex $Interfaz.ifIndex -ServerAddresses ("192.168.1.10", "8.8.8.8")
-
-# 4. AQUI AGREGAS NUEVAS CONFIGURACIONES (Ejemplo: Habilitar Escritorio Remoto)
-Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -ErrorAction SilentlyContinue
-Enable-NetFirewallRule -DisplayGroup "Remote Desktop" -ErrorAction SilentlyContinue
+Set-DnsClientServerAddress -InterfaceIndex $Interfaz.ifIndex -ServerAddresses ("192.168.1.10", "8.8.8.8") -ErrorAction SilentlyContinue
 
 Write-Host "Configuracion procesada exitosamente." -ForegroundColor Yellow
