@@ -1,6 +1,6 @@
 Write-Host "Iniciando configuracion del servidor..." -ForegroundColor Green
 
-# 1. Nombre y Grupo (Se omitira si ya esta configurado)
+# 1. Nombre y Grupo
 Rename-Computer -NewName "ServerWindows19" -Force -ErrorAction SilentlyContinue
 Add-Computer -WorkGroupName "SO2" -ErrorAction SilentlyContinue
 
