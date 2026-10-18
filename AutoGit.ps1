@@ -1,26 +1,22 @@
-# ==========================================
-# SCRIPT AUTOMÁTICO DE GIT Y VIRTUALBOX
-# ==========================================
+ï»¿$VMName     = "Windows Server 19"
+$VBoxPath   = "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"
+$IsoDestino = "C:\Windows_Server.iso"
 
-Write-Host "1. Guardando y subiendo cambios a GitHub..." -ForegroundColor Cyan
+& $VBoxPath controlvm "$VMName" poweroff 2>$null
+Start-Sleep -Seconds 2
+& $VBoxPath storagectl "$VMName" --name "SATA" --remove 2>$null
+& $VBoxPath storagectl "$VMName" --name "IDE" --remove 2>$null
+& $VBoxPath storagectl "$VMName" --name "SATA" --add sata --controller IntelAhci --portcount 2 2>$null
+& $VBoxPath storageattach "$VMName" --storagectl "SATA" --port 0 --device 0 --type hdd --medium "$HOME\VirtualBox VMs\$VMName\$VMName.vdi" 2>$null
+& $VBoxPath storageattach "$VMName" --storagectl "SATA" --port 1 --device 0 --type dvddrive --medium "$IsoDestino" 2>$null
+& $VBoxPath modifyvm "$VMName" --nic1 nat
+& $VBoxPath modifyvm "$VMName" --nic2 intnet
+& $VBoxPath modifyvm "$VMName" --intnet2 "SO2"
+& $VBoxPath modifyvm "$VMName" --graphicscontroller vboxsvga
+& $VBoxPath modifyvm "$VMName" --vram 128
+& $VBoxPath modifyvm "$VMName" --accelerate3d off
+
 git add .
-git commit -m "Actualizacion automatica del servidor" 2>$null
+git commit -m "Auto-actualizacion y ejecucion del servidor" 2>$null
 git push
-
-Write-Host "2. Aplicando configuración en la Máquina Virtual..." -ForegroundColor Cyan
-$VMName = "Windows Server 19"
-$VBoxPath = "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"
-
-# Apagar la VM de forma segura por si estuviera colgada
-& $VBoxPath controlvm $VMName poweroff soft 2>$null
-Start-Sleep -Seconds 3
-
-# Aplicar configuración gráfica definitiva (VBoxSVGA + Aceleración 3D + 128MB VRAM)
-& $VBoxPath modifyvm $VMName --graphicscontroller vboxsvga
-& $VBoxPath modifyvm $VMName --vram 128
-& $VBoxPath modifyvm $VMName --accelerate3d on
-
-# Asegurar que el lector de DVD esté vacío
-& $VBoxPath storageattach $VMName --storagectl "SATA" --port 1 --device 0 --medium emptydrive 2>$null
-
-Write-Host "¡Todo se guardó, subió y aplicó en el servidor con éxito!" -ForegroundColor Green
+& $VBoxPath startvm "$VMName"
