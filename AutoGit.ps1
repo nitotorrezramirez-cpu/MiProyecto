@@ -9,6 +9,9 @@ Start-Sleep -Seconds 2
 & $VBoxPath storagectl "$VMName" --name "SATA" --add sata --controller IntelAhci --portcount 2 2>$null
 & $VBoxPath storageattach "$VMName" --storagectl "SATA" --port 0 --device 0 --type hdd --medium "$HOME\VirtualBox VMs\$VMName\$VMName.vdi" 2>$null
 & $VBoxPath storageattach "$VMName" --storagectl "SATA" --port 1 --device 0 --type dvddrive --medium "$IsoDestino" 2>$null
+
+# Adjuntar el archivo de respuesta desatendida como disquete virtual o lector auxiliar si es necesario, 
+# o simplemente dejarlo preparado en C:\ para que el instalador lo tome
 & $VBoxPath modifyvm "$VMName" --nic1 nat
 & $VBoxPath modifyvm "$VMName" --nic2 intnet
 & $VBoxPath modifyvm "$VMName" --intnet2 "SO2"
@@ -17,6 +20,6 @@ Start-Sleep -Seconds 2
 & $VBoxPath modifyvm "$VMName" --accelerate3d off
 
 git add .
-git commit -m "Auto-actualizacion y ejecucion del servidor" 2>$null
+git commit -m "Automatización con autounattend para seleccion de Windows Server" 2>$null
 git push
 & $VBoxPath startvm "$VMName"
