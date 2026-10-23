@@ -4,42 +4,827 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SÜRE | Mundial Sobre Ruedas | Tienda Online</title>
+    <!-- Tailwind CSS desde CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Montserrat & Inter Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            background-color: #000000;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0b0b0e;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
+        .banner-bg {
+            background: linear-gradient(135deg, #180026 0%, #4a034f 35%, #7e0341 65%, #2a022d 100%);
+            position: relative;
         }
 
-        .container img {
-            width: 100%;
-            height: auto;
-            display: block;
+        .category-title-bar {
+            background-color: #0d0d11;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-title-bar {
+            background-color: #7b127f;
+        }
+
+        .category-card.active .category-title-bar {
+            background-color: #d91223;
+        }
+
+        .gold-badge {
+            background: linear-gradient(185deg, #fce055 0%, #dfa013 100%);
+            color: #000;
+        }
+
+        .purple-label {
+            background-color: #6a0b6e;
+        }
+
+        .custom-card-bg {
+            background: linear-gradient(180deg, #14141c 0%, #0d0d12 100%);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f13;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333340;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7b127f;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between">
 
-    <div class="container">
-        <!-- Imagen principal de la tienda -->
-        <img src="sure.jpg" alt="SÜRE - Mundial Sobre Ruedas | Tienda Online">
+    <!-- ========================================== -->
+    <!-- HEADER / ENCABEZADO                        -->
+    <!-- ========================================== -->
+    <header class="bg-white text-gray-800 sticky top-0 z-40 shadow-md">
+        <div class="max-w-[1500px] mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo SÜRE -->
+            <a href="#" onclick="showCategory('all')" class="flex items-center gap-2 group">
+                <svg class="w-8 h-8 text-[#d91223] transition-transform group-hover:scale-105" viewBox="0 0 100 100" fill="currentColor">
+                    <polygon points="0,20 80,50 0,80 25,50" />
+                </svg>
+                <div class="flex flex-col leading-none">
+                    <span class="text-3xl font-black tracking-wider text-black flex items-center">
+                        S<span class="inline-block relative">Ü<span class="absolute -top-1 left-1/2 -translate-x-1/2 text-xs font-bold text-[#d91223]">• •</span></span>RE
+                    </span>
+                    <span class="text-[9px] font-extrabold tracking-widest text-gray-500 uppercase">Mundial Sobre Ruedas</span>
+                </div>
+            </a>
+
+            <!-- Buscador Centrado -->
+            <div class="flex-1 max-w-2xl mx-auto w-full order-3 md:order-2">
+                <div class="relative flex items-center">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400"></i>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        oninput="handleSearch()"
+                        placeholder="Buscar motocarros, motos eléctricas, TVs, aires, lavadoras..." 
+                        class="w-full bg-[#f1f3f5] text-gray-800 rounded-full py-2.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-[#d91223] transition text-sm"
+                    >
+                </div>
+            </div>
+
+            <!-- Carrito con Badge Contador -->
+            <div class="flex items-center order-2 md:order-3">
+                <button onclick="toggleCartModal()" class="relative p-2.5 rounded-full hover:bg-gray-100 transition flex items-center gap-2" aria-label="Carrito de compras">
+                    <i class="fa-solid fa-cart-shopping text-2xl text-gray-800"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-[#d91223] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
+                        0
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow">
+        
+        <!-- ========================================== -->
+        <!-- BANNER PROMOCIONAL "MUNDIAL SOBRE RUEDAS" -->
+        <!-- ========================================== -->
+        <section class="banner-bg w-full overflow-hidden border-b-2 border-amber-500 shadow-2xl">
+            <div class="max-w-[1600px] mx-auto px-4 py-6 md:py-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    
+                    <!-- Lado Izquierdo: Ticket Dorado -->
+                    <div class="lg:col-span-3 flex justify-center">
+                        <div class="relative bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 p-1 rounded-2xl shadow-2xl border-2 border-yellow-200 transform hover:scale-105 transition duration-300 max-w-xs w-full">
+                            <div class="bg-gradient-to-b from-yellow-100 to-amber-200 text-amber-950 p-4 rounded-xl border border-dashed border-amber-800 text-center relative overflow-hidden">
+                                <div class="text-xs font-bold uppercase tracking-widest text-amber-900 border-b border-amber-700/30 pb-1">Ticket Dorado</div>
+                                <div class="my-3">
+                                    <i class="fa-solid fa-futbol text-4xl text-amber-950 animate-bounce"></i>
+                                </div>
+                                <h3 class="text-2xl font-black uppercase leading-tight tracking-tight text-amber-950">
+                                    MUNDIAL<br><span class="text-xl">SOBRE RUEDAS</span>
+                                </h3>
+                                <div class="mt-2 bg-amber-950 text-amber-300 text-[10px] font-mono py-1 px-2 rounded font-bold">
+                                    Nº 000000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Centro: Mensaje Principal de SÜRE TE REGALA -->
+                    <div class="lg:col-span-6 text-center space-y-3">
+                        <h1 class="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-white drop-shadow-md">
+                            SURE TE REGALA
+                        </h1>
+                        <p class="text-lg md:text-2xl font-bold text-yellow-300 max-w-3xl mx-auto leading-snug">
+                            100 premios, un <span class="text-white underline decoration-amber-400">Auto 0 KM</span> y una <span class="text-white underline decoration-amber-400">Camioneta Sure 100% Eléctrica</span>
+                        </p>
+
+                        <!-- Botón Participa -->
+                        <div class="pt-2">
+                            <button onclick="showCategory('all')" class="gold-badge px-8 py-2.5 rounded-full font-black text-lg md:text-xl shadow-lg border-2 border-white uppercase tracking-wider transform -rotate-1 hover:rotate-0 hover:scale-105 transition cursor-pointer">
+                                !PARTICIPA Y GANA!
+                            </button>
+                        </div>
+
+                        <p class="text-xs md:text-sm text-gray-200 pt-1 font-medium max-w-xl mx-auto">
+                            Por la compra de <span class="font-bold text-yellow-300">Bs. 350</span> participa del SORTEO de 100 premios y 2 Vehículos 100% Eléctricos participando de un juego al azar.
+                        </p>
+                    </div>
+
+                    <!-- Lado Derecho: Ilustración de Vehículos Eléctricos -->
+                    <div class="lg:col-span-3 flex justify-center items-center gap-2">
+                        <!-- Camioneta SVG -->
+                        <div class="w-1/2 flex flex-col items-center cursor-pointer" onclick="showCategory('e-titan')">
+                            <svg class="w-full h-24 text-emerald-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]" viewBox="0 0 200 100" fill="currentColor">
+                                <path d="M20,60 L40,30 L120,30 L150,60 L190,60 L190,80 L10,80 Z" fill="#22c55e" />
+                                <rect x="50" y="35" width="40" height="20" fill="#e0f2fe" />
+                                <circle cx="45" cy="80" r="15" fill="#1e293b" />
+                                <circle cx="45" cy="80" r="7" fill="#94a3b8" />
+                                <circle cx="155" cy="80" r="15" fill="#1e293b" />
+                                <circle cx="155" cy="80" r="7" fill="#94a3b8" />
+                            </svg>
+                            <span class="text-[10px] font-bold text-emerald-300 uppercase">E-Cargo Titan</span>
+                        </div>
+                        <!-- Moto SVG -->
+                        <div class="w-1/2 flex flex-col items-center cursor-pointer" onclick="showCategory('motos')">
+                            <svg class="w-full h-24 text-blue-400 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]" viewBox="0 0 200 100">
+                                <circle cx="45" cy="65" r="20" stroke="#e2e8f0" stroke-width="6" fill="none" />
+                                <circle cx="155" cy="65" r="20" stroke="#e2e8f0" stroke-width="6" fill="none" />
+                                <path d="M45,65 L80,40 L120,40 L155,65 M80,40 L100,20 L130,20" stroke="#3b82f6" stroke-width="6" stroke-linecap="round" fill="none" />
+                                <rect x="85" y="35" width="30" height="15" fill="#1d4ed8" rx="3" />
+                            </svg>
+                            <span class="text-[10px] font-bold text-blue-300 uppercase">Motos Eléctricas</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN DE CATEGORÍAS (6 BOTONES/TARJETAS) -->
+        <!-- ========================================== -->
+        <section class="max-w-[1600px] mx-auto px-2 py-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3" id="categories-grid">
+                
+                <!-- 1. E-TITÁN -->
+                <div onclick="showCategory('e-titan')" id="cat-card-e-titan" class="category-card rounded-md overflow-hidden bg-gradient-to-b from-emerald-950 via-emerald-900 to-black border border-emerald-800/40 flex flex-col justify-between cursor-pointer transition hover:-translate-y-1">
+                    <div class="h-36 md:h-44 relative flex items-center justify-center p-3">
+                        <i class="fa-solid fa-bolt absolute top-3 left-3 text-emerald-400 opacity-40 text-3xl"></i>
+                        <svg class="w-full h-28 text-white drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" viewBox="0 0 200 120" fill="none">
+                            <rect x="20" y="40" width="70" height="40" fill="#f8fafc" rx="5" />
+                            <path d="M90,40 L140,40 L160,65 L160,80 L90,80 Z" fill="#e2e8f0" />
+                            <rect x="100" y="45" width="35" height="18" fill="#0284c7" />
+                            <circle cx="50" cy="85" r="16" fill="#0f172a" />
+                            <circle cx="50" cy="85" r="7" fill="#64748b" />
+                            <circle cx="135" cy="85" r="16" fill="#0f172a" />
+                            <circle cx="135" cy="85" r="7" fill="#64748b" />
+                        </svg>
+                    </div>
+                    <div class="category-title-bar purple-label py-2.5 px-2 text-center">
+                        <h2 class="text-xs md:text-sm font-black tracking-wide text-white uppercase">E-TITÁN</h2>
+                    </div>
+                </div>
+
+                <!-- 2. MOTOS 100% ELÉCTRICAS -->
+                <div onclick="showCategory('motos')" id="cat-card-motos" class="category-card rounded-md overflow-hidden bg-gradient-to-b from-emerald-950 via-emerald-900 to-black border border-emerald-800/40 flex flex-col justify-between cursor-pointer transition hover:-translate-y-1">
+                    <div class="h-36 md:h-44 relative flex items-center justify-center p-3">
+                        <i class="fa-solid fa-bolt absolute top-3 right-3 text-emerald-400 opacity-40 text-3xl"></i>
+                        <svg class="w-full h-28 text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" viewBox="0 0 200 120">
+                            <circle cx="45" cy="75" r="22" stroke="#e2e8f0" stroke-width="8" fill="none" />
+                            <circle cx="155" cy="75" r="22" stroke="#e2e8f0" stroke-width="8" fill="none" />
+                            <path d="M45,75 L80,50 L120,50 L155,75 M80,50 L100,25 L130,25" stroke="#2563eb" stroke-width="8" stroke-linecap="round" fill="none" />
+                            <rect x="90" y="40" width="30" height="15" fill="#1d4ed8" rx="3" />
+                        </svg>
+                    </div>
+                    <div class="category-title-bar py-2.5 px-2 text-center">
+                        <h2 class="text-xs md:text-sm font-black tracking-wide text-white uppercase">MOTOS 100% ELÉCTRICAS</h2>
+                    </div>
+                </div>
+
+                <!-- 3. TELEVISORES -->
+                <div onclick="showCategory('televisores')" id="cat-card-televisores" class="category-card rounded-md overflow-hidden bg-gradient-to-b from-blue-950 via-slate-900 to-black border border-blue-900/40 flex flex-col justify-between cursor-pointer transition hover:-translate-y-1">
+                    <div class="h-36 md:h-44 relative flex items-center justify-center p-3">
+                        <div class="w-full">
+                            <div class="w-full h-24 bg-gradient-to-tr from-green-600 via-blue-600 to-amber-500 rounded-lg border-2 border-gray-700 shadow-lg flex items-center justify-center overflow-hidden">
+                                <i class="fa-solid fa-tv text-3xl text-white/80"></i>
+                            </div>
+                            <div class="w-16 h-1.5 bg-gray-600 mx-auto mt-1 rounded-full"></div>
+                        </div>
+                    </div>
+                    <div class="category-title-bar py-2.5 px-2 text-center">
+                        <h2 class="text-xs md:text-sm font-black tracking-wide text-white uppercase">TELEVISORES</h2>
+                    </div>
+                </div>
+
+                <!-- 4. AIRES ACONDICIONADOS -->
+                <div onclick="showCategory('aires')" id="cat-card-aires" class="category-card rounded-md overflow-hidden bg-gradient-to-b from-sky-950 via-slate-900 to-black border border-sky-900/40 flex flex-col justify-between cursor-pointer transition hover:-translate-y-1">
+                    <div class="h-36 md:h-44 relative flex items-center justify-center p-3">
+                        <div class="w-full bg-white rounded-lg p-2 shadow-xl border border-gray-200">
+                            <div class="h-1.5 w-full bg-gray-200 rounded mb-1"></div>
+                            <div class="flex justify-between items-center text-[7px] text-gray-500 font-mono">
+                                <span>SÜRE INVERTER</span>
+                                <span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
+                            </div>
+                            <div class="mt-2 flex justify-center gap-2 text-cyan-500">
+                                <i class="fa-solid fa-wind text-lg"></i>
+                                <i class="fa-solid fa-snowflake text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="category-title-bar py-2.5 px-2 text-center">
+                        <h2 class="text-xs md:text-sm font-black tracking-wide text-white uppercase">AIRES ACONDICIONADOS</h2>
+                    </div>
+                </div>
+
+                <!-- 5. LAVADORAS -->
+                <div onclick="showCategory('lavadoras')" id="cat-card-lavadoras" class="category-card rounded-md overflow-hidden bg-gradient-to-b from-purple-950 via-slate-900 to-black border border-purple-900/40 flex flex-col justify-between cursor-pointer transition hover:-translate-y-1">
+                    <div class="h-36 md:h-44 relative flex items-center justify-center p-3">
+                        <div class="w-20 h-28 bg-gray-100 rounded-lg p-1.5 shadow-2xl flex flex-col justify-between border border-gray-300">
+                            <div class="flex justify-between items-center bg-gray-200 p-1 rounded">
+                                <div class="w-2 h-2 rounded-full bg-gray-500"></div>
+                                <div class="h-1 w-6 bg-gray-300 rounded"></div>
+                            </div>
+                            <div class="w-14 h-14 mx-auto rounded-full bg-gray-800 border-2 border-gray-300 flex items-center justify-center">
+                                <i class="fa-solid fa-water text-cyan-300 text-base"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="category-title-bar py-2.5 px-2 text-center">
+                        <h2 class="text-xs md:text-sm font-black tracking-wide text-white uppercase">LAVADORAS</h2>
+                    </div>
+                </div>
+
+                <!-- 6. SMART HOME -->
+                <div onclick="showCategory('smart-home')" id="cat-card-smart-home" class="category-card rounded-md overflow-hidden bg-gradient-to-b from-slate-800 via-slate-900 to-black border border-gray-700/40 flex flex-col justify-between cursor-pointer transition hover:-translate-y-1">
+                    <div class="h-36 md:h-44 relative flex items-center justify-center p-3">
+                        <div class="flex items-end justify-center gap-2">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-white rounded-full border border-gray-300 flex items-center justify-center shadow-lg">
+                                    <div class="w-4 h-4 bg-black rounded-full border border-blue-500"></div>
+                                </div>
+                                <div class="w-1.5 h-4 bg-gray-300"></div>
+                            </div>
+                            <div class="text-yellow-200 text-3xl">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="category-title-bar py-2.5 px-2 text-center">
+                        <h2 class="text-xs md:text-sm font-black tracking-wide text-white uppercase">SMART HOME</h2>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BREADCRUMB & TITULO SECCION ACTUAL        -->
+        <!-- ========================================== -->
+        <section class="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between border-b border-gray-800">
+            <div class="flex items-center gap-2 text-sm text-gray-400">
+                <button onclick="showCategory('all')" class="hover:text-white transition flex items-center gap-1">
+                    <i class="fa-solid fa-house text-xs"></i> Inicio
+                </button>
+                <span>/</span>
+                <span id="current-category-name" class="text-yellow-400 font-bold uppercase">Todos los productos</span>
+            </div>
+
+            <button onclick="showCategory('all')" id="btn-show-all" class="text-xs text-gray-300 bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-full transition flex items-center gap-1.5">
+                <i class="fa-solid fa-border-all"></i> Ver Todo
+            </button>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- CATÁLOGO DINÁMICO DE PRODUCTOS             -->
+        <!-- ========================================== -->
+        <section class="max-w-[1600px] mx-auto px-4 py-8">
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Productos inyectados por JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- MODAL DE DETALLES DE PRODUCTO              -->
+    <!-- ========================================== -->
+    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#12121a] border border-gray-700 rounded-2xl max-w-2xl w-full p-6 relative overflow-hidden text-white shadow-2xl">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content">
+                <!-- Detalle inyectado por JS -->
+            </div>
+        </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- MODAL DEL CARRITO DE COMPRAS               -->
+    <!-- ========================================== -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex justify-end hidden">
+        <div class="bg-[#12121a] w-full max-w-md h-full p-6 flex flex-col justify-between border-l border-gray-800 shadow-2xl">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping text-yellow-400"></i> Tu Carrito de Compras
+                    </h3>
+                    <button onclick="toggleCartModal()" class="text-gray-400 hover:text-white text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div id="cart-items" class="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <!-- Items de carrito por JS -->
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-gray-800 space-y-4">
+                <div class="flex justify-between items-center text-lg font-bold">
+                    <span>Total estimado:</span>
+                    <span id="cart-total" class="text-emerald-400 text-xl">Bs. 0</span>
+                </div>
+                <button onclick="checkoutWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> Confirmar Pedido por WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#07070a] border-t border-gray-800 text-gray-400 py-8 text-xs">
+        <div class="max-w-[1600px] mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+            <div>
+                <span class="text-xl font-black text-white tracking-wider flex items-center justify-center md:justify-start gap-1">
+                    S<span class="text-[#d91223]">Ü</span>RE
+                </span>
+                <p class="mt-2 text-gray-500">Mundial Sobre Ruedas. Movilidad eléctrica y tecnología de punta para todo el país.</p>
+            </div>
+            <div class="space-y-1">
+                <p class="font-bold text-gray-200 uppercase">Contacto & Soporte</p>
+                <p><i class="fa-solid fa-phone text-gray-500"></i> Línea Directa: 800-10-SURE</p>
+                <p><i class="fa-solid fa-envelope text-gray-500"></i> ventas@sure.com.bo</p>
+            </div>
+            <div>
+                <p class="font-bold text-gray-200 uppercase mb-2">Garantía Oficial</p>
+                <p class="text-gray-500">Todos nuestros vehículos incluyen 1 año de garantía oficial de fábrica y repuestos originales.</p>
+            </div>
+        </div>
+        <div class="text-center border-t border-gray-900 mt-6 pt-4 text-gray-600">
+            &copy; 2026 SÜRE Bolivia - Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <!-- LÓGICA DE APLICACIÓN Y BASE DE DATOS LOCAL -->
+    <script>
+        // Base de datos de productos por categoría
+        const productsData = [
+            // E-TITÁN
+            {
+                id: 'et1',
+                category: 'e-titan',
+                name: 'E-Titán Cargo 1500W Super',
+                price: 18500,
+                icon: 'fa-truck-pickup',
+                badge: '100% Eléctrico',
+                specs: [
+                    { label: 'Motor', val: '1500W Inverter EV' },
+                    { label: 'Autonomía', val: '80 - 100 Km' },
+                    { label: 'Carga Máx', val: '800 Kg' },
+                    { label: 'Batería', val: 'Litio 72V 45Ah' }
+                ],
+                desc: 'Camioneta / Motocarro de carga pesado 100% eléctrico. Cero emisiones de gas, tracción reforzada y Tolva hidráulica reclinable.'
+            },
+            {
+                id: 'et2',
+                category: 'e-titan',
+                name: 'E-Titán Maxi Tolva 2000W',
+                price: 22400,
+                icon: 'fa-truck-field',
+                badge: 'Heavy Duty',
+                specs: [
+                    { label: 'Motor', val: '2000W High Torque' },
+                    { label: 'Autonomía', val: '110 Km' },
+                    { label: 'Carga Máx', val: '1200 Kg' },
+                    { label: 'Velocidad', val: '55 Km/h' }
+                ],
+                desc: 'Vehículo de carga pesado para trabajo rural y urbano con chasis reforzado de alta resistencia y suspensión de ballestas.'
+            },
+
+            // MOTOS 100% ELÉCTRICAS
+            {
+                id: 'm1',
+                category: 'motos',
+                name: 'Moto SÜRE Sport Volt X',
+                price: 9800,
+                icon: 'fa-motorcycle',
+                badge: 'Urbana / Sport',
+                specs: [
+                    { label: 'Motor', val: '2500W Brushless' },
+                    { label: 'Velocidad', val: '75 Km/h' },
+                    { label: 'Autonomía', val: '70 Km' },
+                    { label: 'Frenos', val: 'Disco ABS Doble' }
+                ],
+                desc: 'Moped y motocicleta deportiva con aceleración instantánea, luces LED integradas y tablero digital HD.'
+            },
+            {
+                id: 'm2',
+                category: 'motos',
+                name: 'Scooter SÜRE E-City 1000W',
+                price: 6400,
+                icon: 'fa-person-biking',
+                badge: 'Económica',
+                specs: [
+                    { label: 'Motor', val: '1000W Silencioso' },
+                    { label: 'Autonomía', val: '50 Km' },
+                    { label: 'Carga Rápida', val: '3 a 4 Horas' },
+                    { label: 'Llantas', val: 'Sellomatic 10"' }
+                ],
+                desc: 'Diseñada para el tráfico diario de la ciudad. Ágil, ligera y muy fácil de manejar sin necesidad de gasolina.'
+            },
+
+            // TELEVISORES
+            {
+                id: 'tv1',
+                category: 'televisores',
+                name: 'Smart TV SÜRE 65" 4K QLED Android',
+                price: 3850,
+                icon: 'fa-tv',
+                badge: '4K Ultra HD',
+                specs: [
+                    { label: 'Pantalla', val: '65" QLED HDR10+' },
+                    { label: 'Sistema', val: 'Google TV 11' },
+                    { label: 'Sonido', val: 'Dolby Atmos 24W' },
+                    { label: 'Conexión', val: 'Wi-Fi 5G, HDMI 2.1' }
+                ],
+                desc: 'Sumérgete en el Mundial Sobre Ruedas con nitidez extrema, colores vivos de pantalla QLED y control por voz inteligente.'
+            },
+            {
+                id: 'tv2',
+                category: 'televisores',
+                name: 'Smart TV SÜRE 55" Frameless 4K',
+                price: 2750,
+                icon: 'fa-desktop',
+                badge: 'Sin Bordes',
+                specs: [
+                    { label: 'Pantalla', val: '55" LED Ultra Slim' },
+                    { label: 'Sistema', val: 'Android TV' },
+                    { label: 'Procesador', val: 'Quad-Core 1.5 GHz' },
+                    { label: 'Bluetooth', val: 'v5.0 Integrado' }
+                ],
+                desc: 'Diseño elegante sin bordes para aprovechar toda la pantalla. Compatible con Netflix, YouTube, Disney+ y Prime Video.'
+            },
+
+            // AIRES ACONDICIONADOS
+            {
+                id: 'ac1',
+                category: 'aires',
+                name: 'Aire SÜRE Inverter 18000 BTU Frio/Calor',
+                price: 3400,
+                icon: 'fa-snowflake',
+                badge: 'Ahorro 70% A+++',
+                specs: [
+                    { label: 'Capacidad', val: '18000 BTU' },
+                    { label: 'Tecnología', val: 'Full DC Inverter' },
+                    { label: 'Gas', val: 'Ecológico R410A' },
+                    { label: 'Control', val: 'Wi-Fi Smart App' }
+                ],
+                desc: 'Enfría tus espacios de forma ultra rápida y silenciosa consumiendo hasta un 70% menos de energía eléctrica.'
+            },
+            {
+                id: 'ac2',
+                category: 'aires',
+                name: 'Aire Split SÜRE 12000 BTU Eco',
+                price: 2450,
+                icon: 'fa-wind',
+                badge: 'Silence Pro',
+                specs: [
+                    { label: 'Capacidad', val: '12000 BTU' },
+                    { label: 'Filtro', val: 'Iones de Plata Bio' },
+                    { label: 'Ruido', val: 'Ultra bajo (19dB)' },
+                    { label: 'Garantía', val: '5 años compresor' }
+                ],
+                desc: 'Climatización perfecta para dormitorios y oficinas con triple filtrado de aire antibacteriano.'
+            },
+
+            // LAVADORAS
+            {
+                id: 'lav1',
+                category: 'lavadoras',
+                name: 'Lavadora SÜRE Inverter 16 Kg Carga Frontal',
+                price: 4200,
+                icon: 'fa-soap',
+                badge: 'Inverter Direct Drive',
+                specs: [
+                    { label: 'Capacidad', val: '16 Kilogramos' },
+                    { label: 'Programas', val: '14 de lavado a vapor' },
+                    { label: 'Motor', val: 'Inverter BLDC 10a' },
+                    { label: 'Eficiencia', val: 'A+++ Agua/Luz' }
+                ],
+                desc: 'Cuidado superior de las prendas con tecnología de vapor que elimina gérmenes y reduce arrugas.'
+            },
+
+            // SMART HOME
+            {
+                id: 'sh1',
+                category: 'smart-home',
+                name: 'Kit Seguridad SÜRE Smart 360 Exterior',
+                price: 850,
+                icon: 'fa-video',
+                badge: 'IoT Smart',
+                specs: [
+                    { label: 'Resolución', val: '2K HD Visión Nocturna' },
+                    { label: 'Audio', val: 'Bidireccional' },
+                    { label: 'Detección', val: 'IA de Humanos' },
+                    { label: 'Almacenamiento', val: 'Cloud + MicroSD' }
+                ],
+                desc: 'Mantén tu hogar y vehículo protegidos 24/7 con notificaciones instantáneas a tu celular.'
+            }
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+
+        // Inicializar renderizado
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+        });
+
+        // Filtrar categorías
+        function showCategory(catKey) {
+            currentFilter = catKey;
+            
+            // Actualizar interfaz activa
+            document.querySelectorAll('.category-card').forEach(card => card.classList.remove('active'));
+            if (catKey !== 'all') {
+                const activeCard = document.getElementById(`cat-card-${catKey}`);
+                if (activeCard) activeCard.classList.add('active');
+            }
+
+            // Nombre de la categoría
+            const catNames = {
+                'all': 'Todos los productos',
+                'e-titan': 'E-TITÁN (Motocarros & Carga)',
+                'motos': 'MOTOS 100% ELÉCTRICAS',
+                'televisores': 'TELEVISORES SMART 4K',
+                'aires': 'AIRES ACONDICIONADOS INVERTER',
+                'lavadoras': 'LAVADORAS AUTOMÁTICAS',
+                'smart-home': 'DISPOSITIVOS SMART HOME'
+            };
+            document.getElementById('current-category-name').textContent = catNames[catKey] || 'Catálogo';
+
+            renderProducts();
+        }
+
+        // Búsqueda por texto
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            renderProducts(query);
+        }
+
+        // Renderizar tarjeta de productos
+        function renderProducts(searchQuery = '') {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            const filtered = productsData.filter(p => {
+                const matchesCat = (currentFilter === 'all') || (p.category === currentFilter);
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.desc.toLowerCase().includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-500">
+                        <i class="fa-solid fa-box-open text-5xl mb-3"></i>
+                        <p class="text-lg font-semibold">No se encontraron productos en esta categoría.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "custom-card-bg rounded-2xl border border-gray-800 p-5 flex flex-col justify-between hover:border-yellow-500/50 transition duration-300 shadow-xl group";
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-purple-900/60 text-purple-200 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase border border-purple-500/30">
+                                ${p.badge}
+                            </span>
+                            <span class="text-xs text-emerald-400 font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-shield-halved"></i> Garantía
+                            </span>
+                        </div>
+
+                        <!-- Icono o Imagen Ilustrativa -->
+                        <div class="h-40 flex items-center justify-center my-2 text-yellow-400 group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid ${p.icon} text-7xl drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]"></i>
+                        </div>
+
+                        <h3 class="font-black text-lg text-white group-hover:text-yellow-400 transition leading-snug">
+                            ${p.name}
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-2 line-clamp-2">${p.desc}</p>
+
+                        <!-- Ficha Técnica Resumida -->
+                        <div class="mt-4 grid grid-cols-2 gap-2 bg-[#08080c] p-2.5 rounded-lg border border-gray-800/80">
+                            ${p.specs.slice(0, 2).map(s => `
+                                <div>
+                                    <p class="text-[9px] uppercase text-gray-500 font-bold">${s.label}</p>
+                                    <p class="text-xs text-gray-200 font-semibold">${s.val}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-gray-800/80 flex items-center justify-between gap-2">
+                        <div>
+                            <span class="text-[10px] uppercase text-gray-400 block font-bold">Precio Oficial</span>
+                            <span class="text-xl font-black text-emerald-400">Bs. ${p.price.toLocaleString()}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="openProductModal('${p.id}')" class="bg-gray-800 hover:bg-gray-700 text-white p-2.5 rounded-xl transition" title="Ver Especificaciones">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="addToCart('${p.id}')" class="bg-[#d91223] hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                                <i class="fa-solid fa-cart-plus"></i> Añadir
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Abrir Modal de Producto
+        function openProductModal(id) {
+            const product = productsData.find(p => p.id === id);
+            if (!product) return;
+
+            const content = document.getElementById('modal-content');
+            content.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6 items-center">
+                    <div class="w-full md:w-1/2 flex flex-col items-center justify-center p-6 bg-[#09090e] rounded-xl border border-gray-800">
+                        <i class="fa-solid ${product.icon} text-8xl text-yellow-400 mb-4 drop-shadow-[0_0_20px_rgba(234,179,8,0.4)]"></i>
+                        <span class="bg-yellow-500/20 text-yellow-300 text-xs font-bold px-3 py-1 rounded-full uppercase border border-yellow-500/40">
+                            ${product.badge}
+                        </span>
+                    </div>
+                    <div class="w-full md:w-1/2 space-y-4">
+                        <h2 class="text-2xl font-black text-white">${product.name}</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed">${product.desc}</p>
+
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ficha Técnica Oficial:</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                ${product.specs.map(s => `
+                                    <div class="bg-[#1a1a26] p-2 rounded-lg border border-gray-700">
+                                        <p class="text-[10px] text-gray-400 uppercase">${s.label}</p>
+                                        <p class="text-xs font-bold text-white">${s.val}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-gray-400 uppercase block">Precio Especial:</span>
+                                <span class="text-2xl font-black text-emerald-400">Bs. ${product.price.toLocaleString()}</span>
+                            </div>
+                            <button onclick="addToCart('${product.id}'); closeProductModal();" class="bg-[#d91223] hover:bg-red-700 text-white font-bold px-5 py-3 rounded-xl transition shadow-lg flex items-center gap-2">
+                                <i class="fa-solid fa-cart-plus"></i> Añadir al Carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        // Lógica de Carrito
+        function addToCart(id) {
+            const product = productsData.find(p => p.id === id);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const countElem = document.getElementById('cart-count');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            countElem.textContent = totalQty;
+
+            // Renderizar items modal
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+
+            let totalBs = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 py-8">Tu carrito está vacío.</p>`;
+            } else {
+                cart.forEach(item => {
+                    const subtotal = item.price * item.qty;
+                    totalBs += subtotal;
+
+                    const row = document.createElement('div');
+                    row.className = "flex items-center justify-between bg-[#1a1a26] p-3 rounded-xl border border-gray-800";
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid ${item.icon} text-yellow-400 text-xl"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-white line-clamp-1">${item.name}</h4>
+                                <span class="text-xs text-emerald-400 font-bold">Bs. ${item.price.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-gray-300">x${item.qty}</span>
+                            <button onclick="removeFromCart('${item.id}')" class="text-red-400 hover:text-red-300 p-1">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+
+            document.getElementById('cart-total').textContent = `Bs. ${totalBs.toLocaleString()}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                alert('El carrito está vacío. Agrega productos antes de realizar el pedido.');
+                return;
+            }
+
+            let msg = "¡Hola SÜRE Bolivia! Quisiera realizar el siguiente pedido de la Tienda Online:%0A%0A";
+            let total = 0;
+
+            cart.forEach(item => {
+                const sub = item.price * item.qty;
+                total += sub;
+                msg += `• *${item.name}* (x${item.qty}) - Bs. ${sub.toLocaleString()}%0A`;
+            });
+
+            msg += `%0A*Total estimado: Bs. ${total.toLocaleString()}*%0A%0AFavor coordinar envío y métodos de pago.`;
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
+    </script>
 </body>
 </html>
